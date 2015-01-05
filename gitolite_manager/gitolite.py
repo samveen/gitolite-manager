@@ -27,6 +27,27 @@ class Gitolite(object):
 
     return True
 
+  def addUserToRepo(self, username, reponame, user, permission):
+    """
+    Adds 'user' withth 'permission' to 'reponame' of 'username' to config
+    returns true iff successfully added users permission
+    """
+    repo_data = self.__load_repo()
+
+    repo = username + '/' + reponame
+    if repo not in repo_data:
+      return False
+
+    for i, (_, existing_user) in enumerate(repo_data[repo]):
+        if existing_user == user:
+            repo_data[i] = (permission, user)
+            break
+    else:
+        repo_data[repo].append((permission, user))
+
+    self.__save_repo(repo_data)
+
+    return True
 
   def rmRepo(self, username, reponame):
     """
