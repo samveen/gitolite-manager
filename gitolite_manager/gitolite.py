@@ -40,7 +40,7 @@ class Gitolite(object):
 
     for i, (_, existing_user) in enumerate(repo_data[repo]):
         if existing_user == user:
-            repo_data[i] = (permission, user)
+            repo_data[repo][i] = (permission, user)
             break
     else:
         repo_data[repo].append((permission, user))
