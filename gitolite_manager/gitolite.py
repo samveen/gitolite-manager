@@ -149,6 +149,7 @@ class Gitolite(object):
         if len(line_split) != 2:
           raise SyntaxError('Invalid repository def.')
         repo = line_split[1].strip()
+        repo_data[repo] = []
       elif line.startswith(' '):
         if repo == '':
           raise SyntaxError('Missing repo def.')
