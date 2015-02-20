@@ -9,7 +9,7 @@ class Gitolite(object):
     self._key_path = path + "/keydir/"
 
 
-  def addRepo(self, username, reponame):
+  def addRepo(self, username, reponame, add_user=True):
     """
     Adds a new repo to gitolite.
     returns true iff successfully added repo to config
@@ -21,7 +21,9 @@ class Gitolite(object):
     if repo in repo_data:
       return False
 
-    repo_data[repo] = [( 'RW+', username )]
+    repo_data[repo] = []
+    if add_user:
+        repo_data[repo].append(( 'RW+', username ))
 
     self.__save_repo(repo_data)
 
