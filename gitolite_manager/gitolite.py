@@ -177,7 +177,7 @@ class Gitolite(object):
         repo_data[repo].append( ( perm, user) )
       elif line.startswith("option"):
           # Gitolite mirroring options
-          continue
+          pass
       else:
         raise SyntaxError('Invalid line')
 
