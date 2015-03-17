@@ -1,4 +1,4 @@
-import os, glob, tempfile, shutil
+import os, glob, tempfile, shutil, re
 
 
 class Gitolite(object):
@@ -6,7 +6,17 @@ class Gitolite(object):
   def __init__(self, path='./gitolite-admin'):
     self._repo_path = path
     self._user_repo_config = path + "/conf/user_repos.conf"
+    self._gitolite_config = path + "/conf/gitolite.conf"
     self._key_path = path + "/keydir/"
+
+    self._slaves_string = None
+
+    gitolite_admin_conf_file = open(self._gitolite_config, "r")
+    for line in gitolite_admin_conf_file:
+        if re.match("option mirror.slaves", line):
+            self._slaves_string = line.split("=")[1]
+            gitolite_admin_conf_file.close()
+            break
 
 
   def addRepo(self, username, reponame, add_user=True):
@@ -186,6 +196,11 @@ class Gitolite(object):
       tmp_file.write('repo ' + reponame + '\n')
       for perm, user in permlist:
         tmp_file.write(" " + perm + " = " + user + '\n')
+
+      # Adds mirroring options
+      if self._slaves_string is not None:
+          tmp_file.write('option mirror.master = pmaster\n')
+          tmp_file.write('option mirror.slaves =' + self._slaves_string + '\n')
 
     tmp_file.flush()
     shutil.copyfile(tmp_file.name, self._user_repo_config)
