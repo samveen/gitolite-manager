@@ -154,6 +154,11 @@ class Gitolite(object):
 
     while line != '':
 
+      if line == '\n':
+          # Consume empty lines.
+          line = repo_file_content.readline()
+          continue
+
       if line.startswith('repo'):
         line_split = line.split(None, 1)
         if len(line_split) != 2:
@@ -177,9 +182,12 @@ class Gitolite(object):
         repo_data[repo].append( ( perm, user) )
       elif line.startswith("option"):
           # Gitolite mirroring options
-          pass
+          if repo == '':
+            raise SyntaxError('Missing repo def.')
+          else:
+              pass
       else:
-        raise SyntaxError('Invalid line')
+        raise SyntaxError('Invalid line: ' + line)
 
       line = repo_file_content.readline()
 
