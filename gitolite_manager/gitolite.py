@@ -210,7 +210,7 @@ class Gitolite(object):
 
       # Adds mirroring options
       if self._slaves_string is not None:
-          tmp_file.write('option mirror.master = pmaster\n')
+          tmp_file.write('option mirror.master = gitolite-master\n')
           tmp_file.write('option mirror.slaves =' + self._slaves_string + '\n')
 
     tmp_file.flush()
