@@ -216,5 +216,3 @@ class Gitolite(object):
     tmp_file.flush()
     shutil.copyfile(tmp_file.name, self._user_repo_config)
     tmp_file.close()
-
-
