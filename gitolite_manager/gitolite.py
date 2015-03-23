@@ -10,7 +10,6 @@ class Gitolite(object):
     self._key_path = path + "/keydir/"
 
     self._slaves_string = None
-
     gitolite_admin_conf_file = open(self._gitolite_config, "r")
     for line in gitolite_admin_conf_file:
         if re.match("option mirror.slaves", line):
@@ -18,6 +17,10 @@ class Gitolite(object):
             gitolite_admin_conf_file.close()
             break
 
+    self._repo_data = self.__load_repo()
+
+  def save_repo(self):
+    self.__save_repo(self._repo_data)
 
   def addRepo(self, username, reponame, add_user=True):
     """
