@@ -64,6 +64,28 @@ class Gitolite(object):
 
         return True
 
+    def removeUserFromRepo(self, username, reponame, user):
+        """
+        Removes 'user' from 'reponame' of 'username' from config.
+        """
+        repo_data = self.__load_repo()
+
+        repo = username + '/' + reponame
+        if repo not in repo_data:
+            return False
+
+        to_remove = []
+        for i, (_, existing_user) in enumerate(repo_data[repo]):
+            if existing_user == user:
+                to_remove.append(i)
+
+        for i in to_remove:
+            del repo_data[repo][i]
+
+        self.__save_repo(repo_data)
+
+        return True
+
     def rmRepo(self, username, reponame):
         """
         Removes a repo
