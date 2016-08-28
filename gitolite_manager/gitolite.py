@@ -13,9 +13,9 @@ class Gitolite(object):
         gitolite_admin_conf_file = open(self._gitolite_config, "r")
         for line in gitolite_admin_conf_file:
             if re.match("option mirror.slaves", line):
-                self._slaves_string = line.split("=")[1]
-                gitolite_admin_conf_file.close()
+                self._slaves_string = line.split("=",1)[1]
                 break
+        gitolite_admin_conf_file.close()
 
         self._repo_data = self.__load_repo()
 
