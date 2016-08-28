@@ -9,6 +9,9 @@ class Gitolite(object):
         self._gitolite_config = path + "/conf/gitolite.conf"
         self._key_path = path + "/keydir/"
 
+        # Permissions and ownership info
+        self._user_repo_config_mode = os.stat(self._user_repo_config)
+
         self._slaves_string = None
         gitolite_admin_conf_file = open(self._gitolite_config, "r")
         for line in gitolite_admin_conf_file:
@@ -227,20 +230,21 @@ class Gitolite(object):
         """
         Write gitolite config file
         """
+        fd,tmp_file_name=tempfile.mkstemp(prefix='conf-')
 
+        with os.fdopen(fd, 'w') as tmp_file:
+            for reponame, permlist in repo_data.items():
+                tmp_file.write('repo ' + reponame + '\n')
+                for perm, user in permlist:
+                    tmp_file.write(" " + perm + " = " + user + '\n')
 
-        tmp_file = tempfile.NamedTemporaryFile('w')
+                # Adds mirroring options
+                if self._slaves_string is not None:
+                    tmp_file.write('option mirror.master = gitolite-master\n')
+                    tmp_file.write('option mirror.slaves =' + self._slaves_string + '\n')
 
-        for reponame, permlist in repo_data.items():
-            tmp_file.write('repo ' + reponame + '\n')
-            for perm, user in permlist:
-                tmp_file.write(" " + perm + " = " + user + '\n')
+            tmp_file.flush()
 
-            # Adds mirroring options
-            if self._slaves_string is not None:
-                tmp_file.write('option mirror.master = gitolite-master\n')
-                tmp_file.write('option mirror.slaves =' + self._slaves_string + '\n')
-
-        tmp_file.flush()
-        shutil.copyfile(tmp_file.name, self._user_repo_config)
-        tmp_file.close()
+        os.chmod(tmp_file_name, self._user_repo_config_mode.st_mode)
+        os.chown(tmp_file_name, self._user_repo_config_mode.st_uid, self._user_repo_config_mode.st_gid)
+        os.rename(tmp_file_name, self._user_repo_config)
