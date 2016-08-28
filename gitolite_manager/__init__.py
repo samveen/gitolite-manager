@@ -1,6 +1,6 @@
 from gitolite import Gitolite
 
-__version__ = '0.0.0'
+__version__ = '0.0.1'
 
 VERSION = tuple(map(int, __version__.split('.')))
 

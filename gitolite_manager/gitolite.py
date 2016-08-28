@@ -112,6 +112,9 @@ class Gitolite(object):
         return self.__load_repo()
 
 
+    def addSSHKey(self, username, sshkey):
+        return addSSHKey(self, username, None, sshkey)
+
     def addSSHKey(self, username, keyname, sshkey):
 
         key_file_name = self.__get_ssh_key_path(username, keyname)
@@ -128,7 +131,7 @@ class Gitolite(object):
 
         return True
 
-    def rmSSHKey(self, username, keyname):
+    def rmSSHKey(self, username, keyname=None):
 
         key_file_name = self.__get_ssh_key_path(username, keyname)
 
@@ -144,29 +147,29 @@ class Gitolite(object):
         Gets list of users and associated keys
         returns key data
         """
-        keys = glob.glob(self._key_path + '*@*.pub')
+        keys = []
+        for root, dnames, fnames in os.walk(self._key_path):
+            for f in fnames:
+                if f.endswith('.pub'):
+                    keys.append(f)
 
         key_data = {}
 
         for keyfile in keys:
-            filename = os.path.basename(keyfile)[:-4]
-            filename_split = filename.split('@',1)
-
-            if len(filename_split) != 2:
-                raise SyntaxError('Invalid key file name')
-
-            username = filename_split[0].strip()
-            keyname = filename_split[1].strip()
+            username = os.path.basename(keyfile)[:-4]
 
             if username not in key_data:
                 key_data[username] = []
 
-            key_data[username].append(keyname)
+            key_data[username].append(keyfile)
 
         return key_data
 
-    def __get_ssh_key_path(self, username, keyname):
-        return self._key_path + username + "@" + keyname + ".pub"
+    def __get_ssh_key_path(self, username, keyname=None):
+        if keyname:
+            return self._key_path + username + "@" + keyname + ".pub"
+        else:
+            return self._key_path + username + ".pub"
 
     def __load_repo(self):
         """

@@ -44,15 +44,23 @@ By default, it'll use `./gitolite-admin` as gitolite directory.
 
 
 ### Add/remove ssh keys
+This is for new style user keys.  Old style keys are supported, but not encouraged.
+(Refer to http://gitolite.com/gitolite/gitolite.html#users)
 
     >>> import gitolite_manager
     >>> gitolite = gitolite_manager.Gitolite()
-    >>> gitolite.addSSHKey('username', 'keyname', 'ssh key content')
+    >>> gitolite.addSSHKey('username', 'keyname', 'ssh key content') # Old style user key 
+    True
+    >>> gitolite.addSSHKey('username', 'ssh key content') # New style user key
     True
     >>> gitolite.getSSHKeys()
-    {'username': ['keyname']}
-    >>> gitolite.rmSSHKey('username','keyname')
+    {'username': ['keypath']}
+    >>> gitolite.rmSSHKey('username','keypath')
     True
     >>> gitolite.getSSHKeys()
     {}
 
+#### Breaking Change in User/SSHKey API
+*`gitolite.*SSHKey()` break compatibility with old code*. In the new code, the keyname is no longer used. Instead full paths of the keys are used.
+
+In the future, this hopefully will be fixed to support both old and new style user management.
