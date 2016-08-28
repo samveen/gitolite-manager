@@ -25,7 +25,7 @@ class Gitolite(object):
     def addRepo(self, username, reponame, add_user=True):
         """
         Adds a new repo to gitolite.
-        returns true iff successfully added repo to config
+        returns true iff repo successfully added to config
         """
 
         repo_data = self.__load_repo()
@@ -44,7 +44,7 @@ class Gitolite(object):
 
     def addUserToRepo(self, username, reponame, user, permission):
         """
-        Adds 'user' withth 'permission' to 'reponame' of 'username' to config
+        Adds 'user' with 'permission' to 'reponame' of 'username' to config
         returns true iff successfully added users permission
         """
         repo_data = self.__load_repo()
@@ -89,7 +89,7 @@ class Gitolite(object):
     def rmRepo(self, username, reponame):
         """
         Removes a repo
-        returns true iff successfully removed repo from config.
+        returns true iff repo successfully removed from config.
         """
 
         repo_data = self.__load_repo()
@@ -137,7 +137,10 @@ class Gitolite(object):
         return True
 
     def getSSHKeys(self):
-
+        """
+        Gets list of users and associated keys
+        returns key data
+        """
         keys = glob.glob(self._key_path + '*@*.pub')
 
         key_data = {}
