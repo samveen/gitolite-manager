@@ -112,10 +112,10 @@ class Gitolite(object):
         return self.__load_repo()
 
 
-    def addSSHKey(self, username, sshkey):
-        return addSSHKey(self, username, None, sshkey)
-
-    def addSSHKey(self, username, keyname, sshkey):
+    def addSSHKey(self, username, keyname, sshkey=None):
+        if not sshkey: 
+            sshkey=keyname
+            keyname=None
 
         key_file_name = self.__get_ssh_key_path(username, keyname)
 
